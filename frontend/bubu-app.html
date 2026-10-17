@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BUBU App</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#8fd3ff;--sky2:#dff3ff;--pink:#ff8fc7;--pink2:#ffe3f1;--yel:#ffd23f;--yel2:#fff3bd;--ink:#2b3a67;--mint:#8fe3c0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Fredoka','Trebuchet MS',system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--sky2),#fff 50%,var(--pink2));min-height:100vh;font-size:16px}
+#toys{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#toys span{position:absolute;opacity:.2}
+#app{position:relative;z-index:1;max-width:440px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:rgba(255,255,255,.55);box-shadow:0 0 40px rgba(43,58,103,.15)}
+.top{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-bottom:4px solid var(--yel);position:sticky;top:0;z-index:4}
+.top b{flex:1;font-size:22px;color:var(--pink)}
+.ib{font:inherit;font-size:20px;border:0;background:var(--sky2);border-radius:50%;width:40px;height:40px;cursor:pointer}
+.scr{display:none;padding:14px 14px 96px;flex:1;animation:in .3s}
+.scr.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h2{margin:4px 0 10px;font-size:26px;color:var(--pink)}h3{margin:0 0 6px;font-size:19px}
+.card{background:#fff;border:3px solid var(--sky);border-radius:24px;padding:14px;margin:10px 0;box-shadow:0 5px 0 var(--sky)}
+.card.p{border-color:var(--pink);box-shadow:0 5px 0 var(--pink)}.card.y{border-color:var(--yel);box-shadow:0 5px 0 var(--yel)}.card.m{border-color:var(--mint);box-shadow:0 5px 0 var(--mint)}
+.btn{font:inherit;font-weight:700;font-size:18px;border:0;border-radius:99px;padding:13px 22px;background:var(--yel);color:var(--ink);box-shadow:0 5px 0 #d9a900;cursor:pointer;margin:5px 4px 8px 0}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #d9a900}
+.btn.pk{background:var(--pink);color:#fff;box-shadow:0 5px 0 #d9609f}.btn.sk{background:var(--sky);box-shadow:0 5px 0 #4fa9dd}.btn.w{width:100%;font-size:22px}
+.btn:focus-visible,.nav button:focus-visible,.toy:focus-visible,.ib:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.row{display:flex;gap:8px}.row>*{flex:1}.c{text-align:center}
+.pill{display:inline-block;border-radius:99px;padding:2px 12px;font-weight:600;background:var(--yel2)}
+.pill.g{background:#d6f7e8}.pill.r{background:#ffd9dc}
+.bar{height:16px;border-radius:99px;background:var(--sky2);overflow:hidden;border:2px solid var(--sky)}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--yel));transition:width .4s}
+.stage{background:radial-gradient(circle,#fff,var(--sky2));border-radius:32px;border:4px solid #fff;box-shadow:0 8px 0 var(--sky);text-align:center;position:relative;padding:6px}
+.stage svg{width:100%;max-width:330px;overflow:visible}.stage.sm svg{max-width:210px}
+.say{position:absolute;top:8px;left:8px;right:8px;background:#fff;border:3px solid var(--pink);border-radius:18px;padding:3px 10px;font-weight:600;font-size:15px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;display:flex;background:#fff;border-top:4px solid var(--pink);z-index:5;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;font:inherit;font-size:11px;font-weight:600;border:0;background:none;padding:7px 0;color:var(--ink);cursor:pointer}
+.nav button span{display:block;font-size:24px}.nav button.on{background:var(--pink2);color:#d9609f}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stk{aspect-ratio:1;border-radius:18px;background:#fff;border:3px solid var(--yel);display:grid;place-items:center;font-size:34px;text-align:center;line-height:1}
+.stk small{display:block;font-size:10px;font-weight:600;margin-top:2px}.stk.lock{border-color:#cfd8e6;filter:grayscale(1);opacity:.5}
+.arena{position:relative;height:230px;background:repeating-linear-gradient(45deg,#fff8dc,#fff8dc 14px,#fff2b8 14px,#fff2b8 28px);border:4px solid var(--ink);border-radius:20px;overflow:hidden}
+.arena>*{position:absolute;font-size:28px;transition:all .9s ease}
+.nogo{border:3px dashed #222;background:rgba(0,0,0,.18);border-radius:10px;font-size:14px!important;padding:2px 6px;font-weight:700}
+.dpad{display:grid;grid-template-columns:repeat(3,56px);gap:6px;justify-content:center}
+.dpad .btn{padding:8px;margin:0;font-size:22px}
+.race{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.toy{font-size:32px;background:#fff;border:3px solid var(--sky);border-radius:16px;padding:5px 0;cursor:pointer}.toy.gone{visibility:hidden}.toy.bu{background:var(--pink2);border-color:var(--pink)}
+.big{font-size:56px;font-weight:700;line-height:1}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:2px dashed var(--sky2)}
+.sw input[type=checkbox]{width:46px;height:26px;accent-color:var(--pink)}
+input[type=text],select{font:inherit;padding:9px 14px;border-radius:99px;border:3px solid var(--sky);width:100%}
+input[type=range]{width:55%;accent-color:var(--pink)}
+.av{font-size:44px;background:#fff;border:4px solid var(--sky);border-radius:50%;width:76px;height:76px;cursor:pointer}.av.on{border-color:var(--pink);background:var(--pink2)}
+.al{display:flex;gap:10px;align-items:center}.al>span{font-size:34px}
+#conf{position:fixed;inset:0;pointer-events:none;z-index:9;overflow:hidden}
+#conf i{position:absolute;top:-20px;font-style:normal;font-size:26px;animation:fall 2.2s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
+/* robot */
+.bot{transform-origin:170px 270px;animation:dance 1.2s ease-in-out infinite}.head{transform-origin:150px 150px;animation:nod 1.2s ease-in-out infinite}
+.eyelid{transform-box:fill-box;transform-origin:center;animation:blink 3.6s infinite}.scoop{transform-origin:90px 235px;animation:scp 1.2s ease-in-out infinite}
+.tread{transform-box:fill-box;transform-origin:center;animation:spin 1.2s linear infinite}.glow{animation:glw 1.2s ease-in-out infinite}
+.note{opacity:0;animation:flt 2.4s ease-out infinite;font-size:26px}.frown{display:none}
+.sad .smile{display:none}.sad .frown{display:inline}.sad .bot,.calm .bot{animation:none}.sad .bot{animation:shake .5s infinite}.calm .head,.calm .scoop,.calm .tread{animation-duration:3s}
+.hype .bot,.hype .head,.hype .scoop,.hype .tread{animation-duration:.5s}
+@keyframes dance{0%,100%{transform:translateY(0) rotate(-5deg)}25%{transform:translateY(-22px) rotate(0)}50%{transform:translateY(0) rotate(5deg)}75%{transform:translateY(-22px)}}
+@keyframes nod{0%,100%{transform:rotate(4deg)}50%{transform:rotate(-4deg) translateY(-3px)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(0)}95%{transform:scaleY(1)}}@keyframes scp{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes glw{0%,100%{opacity:.5}50%{opacity:1}}@keyframes shake{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@keyframes flt{0%{opacity:0}20%{opacity:1}100%{opacity:0;transform:translateY(-80px) rotate(20deg)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style></head><body>
+<div id="toys" aria-hidden="true"></div><div id="conf"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe6fb"/><stop offset="1" stop-color="#a9cdf0"/></linearGradient>
+<radialGradient id="lg"><stop offset="0" stop-color="#fff6a8"/><stop offset=".6" stop-color="#ffd23f"/><stop offset="1" stop-color="#ffb800"/></radialGradient>
+<pattern id="mesh" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#2c3037"/><circle cx="2.5" cy="2.5" r="1.3" fill="#5b616c"/></pattern></defs></svg>
+
+<div id="app">
+<div class="top" id="top"><b>🐾 BUBU</b><button class="ib" onclick="show('progress')" aria-label="Progress">📊</button><button class="ib" onclick="show('parent')" aria-label="Parent">👨‍👩‍👧</button><button class="ib" onclick="show('settings')" aria-label="Settings">⚙️</button></div>
+
+<div class="scr on c" id="splash"><div style="height:30px"></div><div class="stage" data-bot="Hi! I'm BUBU!"></div><h2 style="font-size:38px;margin-top:18px">BUBU</h2><p>Your toy-tidying friend!</p><button class="btn pk w" onclick="show('profile')">Let's play! 🎉</button></div>
+
+<div class="scr c" id="profile"><h2>Who's playing?</h2><div class="row" id="avs" style="justify-content:center;flex-wrap:wrap"></div><div class="card"><label for="nm"><b>My name is</b></label><input type="text" id="nm" maxlength="14"></div><div class="card"><label for="age"><b>My age group</b></label><select id="age"><option>3-5 years</option><option selected>6-8 years</option><option>9-12 years</option></select></div><button class="btn pk w" onclick="saveProfile()">That's me! ✅</button></div>
+
+<div class="scr" id="home"><div class="stage" data-bot="" id="hbot"></div>
+<div class="card y c"><h3 id="hi"></h3><span id="hst" class="pill r">🔴 BUBU is offline</span> <span class="pill">🔋 <span class="batt">82</span>%</span><p style="margin:6px 0 0">Doing: <b id="hact">Taking a break</b></p></div>
+<button class="btn pk w" onclick="startBubu()">▶ START BUBU</button>
+<div class="row"><button class="btn sk" onclick="show('games')">🎮 PLAY</button><button class="btn" onclick="show('rewards')">⭐ REWARD</button></div>
+<div class="card p c"><div class="big" id="hstars"></div><p style="margin:2px 0">stars today</p><b>🧹 <span id="htoys">0</span> toys tidied today</b><div class="bar" style="margin-top:8px"><i id="hbar"></i></div><small id="hnext"></small></div></div>
+
+<div class="scr" id="connect"><h2>Connect BUBU</h2><div class="stage sm" data-bot="Find me!" id="cbot"></div>
+<div class="card c"><p id="cmsg">Switch BUBU on, then tap the button.</p><label for="ip"><b>BUBU address</b></label><input type="text" id="ip" value="ws://192.168.4.1:81" aria-label="BUBU address"><p><small>Real robot: type the ESP32 address. No robot? Demo mode plays pretend BUBU.</small></p><button class="btn pk w" id="cbtn" onclick="connect()">📡 Find BUBU</button></div></div>
+
+<div class="scr" id="bubu"><h2>My BUBU</h2><div class="stage sm" data-bot="" id="mbot"></div>
+<div class="card c"><span id="mst" class="pill r">🔴 Offline</span> <span class="pill">🔋 <span class="batt">82</span>%</span> <span class="pill" id="mmode">Mode: Tidy</span></div>
+<div class="row"><button class="btn pk" onclick="startBubu()">▶ Start</button><button class="btn" onclick="ctl('pause')">⏸ Pause</button></div><div class="row"><button class="btn sk" onclick="ctl('stop')">⏹ Stop</button><button class="btn sk" onclick="ctl('home')">🏠 Go home</button></div>
+<div class="card"><h3>Modes</h3><div id="modes"></div></div>
+<div class="card"><h3>Drive BUBU</h3><div class="dpad"><span></span><button class="btn" onclick="drive(0,-12)" aria-label="Forward">⬆️</button><span></span><button class="btn" onclick="drive(-12,0)" aria-label="Left">⬅️</button><button class="btn pk" onclick="ctl('stop')" aria-label="Stop">⏹</button><button class="btn" onclick="drive(12,0)" aria-label="Right">➡️</button><span></span><button class="btn" onclick="drive(0,12)" aria-label="Back">⬇️</button><span></span></div></div>
+<div class="card"><h3>Sensors</h3><div class="sw"><span>👀 Low eye (toys)</span><span class="pill g">OK</span></div><div class="sw"><span>👁 High eye (walls)</span><span class="pill g">OK</span></div><div class="sw"><span>🐾 Whisker bumper</span><span class="pill g">OK</span></div><div class="sw"><span>👋 Human sensor</span><span class="pill g">OK</span></div></div>
+<button class="btn sk w" onclick="show('live')">🗺 See BUBU's playground</button></div>
+
+<div class="scr" id="live"><h2>BUBU's Playground</h2><div class="card c" style="margin:0 0 8px"><b id="lst">Waiting</b> · <span id="lmsg">Press start!</span></div>
+<div class="arena" id="arena"><span style="left:6%;top:8%">🧸</span><span style="right:10%;top:10%">🔴</span><span class="nogo" style="left:8%;bottom:10%">🚫 LEGO</span><span style="right:5%;bottom:5%">🏠</span><span id="abot" style="left:40%;top:40%;font-size:38px;z-index:2">🤖</span></div>
+<div class="card c"><b>🧸 Toys tidied: <span id="ltoys">0</span></b><div class="row"><button class="btn pk" onclick="startBubu()">▶ Start</button><button class="btn" onclick="ctl('pause')">⏸ Pause</button></div></div></div>
+
+<div class="scr" id="games"><h2>Games 🎮</h2><div id="glist"></div></div>
+
+<div class="scr c" id="race"><h2>🏁 Tidy Race</h2><div class="big" id="rt">02:00</div>
+<div class="row" style="margin:10px 0"><div class="card p"><div style="font-size:36px">🤖</div>BUBU<div class="big" id="rb">0</div></div><div class="card"><div style="font-size:36px" class="av2">👧</div>YOU<div class="big" id="rm">0</div></div></div>
+<div class="bar"><i id="rbar" style="width:0"></i></div><p id="rmsg">Tap the toys fast!</p><div class="race" id="board"></div><button class="btn sk" onclick="endRace(true)">⏹ Stop</button></div>
+
+<div class="scr c" id="mini"><h2 id="mt"></h2><div class="stage sm" data-bot="" id="gbot"></div><div class="card y"><div style="font-size:50px" id="mi"></div><h3 id="mq"></h3><div class="bar"><i id="mb" style="width:0"></i></div><small id="mp"></small></div><button class="btn pk w" id="mgo">Done! ✅</button></div>
+
+<div class="scr c" id="result"><div class="stage sm" data-bot="" id="rbot"></div><h2 id="rh"></h2><div class="row"><div class="card"><div class="av2" style="font-size:30px">👧</div>You<div class="big" id="r1">0</div></div><div class="card p">🤖<br>BUBU<div class="big" id="r2">0</div></div></div><div class="card y"><b>⭐ +<span id="r3">0</span> Stars</b><div id="rstk" style="font-size:54px;margin-top:6px"></div><div id="rsn"></div></div><button class="btn pk w" onclick="claim()">🎁 CLAIM REWARD</button></div>
+
+<div class="scr" id="rewards"><h2>Rewards ⭐</h2><div class="card y c"><div style="font-size:48px">🌟</div><h3 id="lvn"></h3><div class="bar"><i id="lvb"></i></div><small id="lvs"></small></div>
+<div class="row"><button class="btn pk" onclick="show('stickers')">🎨 Stickers</button><button class="btn sk" onclick="show('progress')">📊 Progress</button></div>
+<div class="card"><h3>Levels</h3><div id="lvl"></div></div></div>
+
+<div class="scr" id="stickers"><h2>My Sticker Book 🎨</h2><div class="card c"><b>Collection: <span id="sc">0</span>/30</b></div><div class="grid3" id="sg"></div></div>
+
+<div class="scr" id="progress"><h2>My Progress 📊</h2><div id="ps"></div><div class="card"><h3>This week</h3><div class="row c" id="wk"></div></div><div class="card"><h3>🏅 Achievements</h3><div id="ach"></div></div></div>
+
+<div class="scr" id="alerts"><h2>BUBU Alerts 🔔</h2><div id="alist"></div></div>
+
+<div class="scr" id="parent"><h2>👨‍👩‍👧 Parent Dashboard</h2><div class="card c" id="gate"><p>Grown-ups only! What is <b id="q"></b>?</p><input type="text" id="qa" inputmode="numeric" aria-label="Answer"><button class="btn pk" onclick="gateOk()">Open</button></div>
+<div id="pbody" hidden><div class="card"><h3>Today</h3><div id="pt"></div></div><div class="card"><h3>Safety</h3><div class="sw"><span>👋 Human detection</span><input type="checkbox" checked aria-label="Human detection"></div><div class="sw"><span>🚫 No-go zones</span><input type="checkbox" checked aria-label="No-go zones"></div><div class="sw"><span>⏸ Auto pause</span><input type="checkbox" checked aria-label="Auto pause"></div></div><div class="card"><h3>Robot</h3>🔋 <span class="batt">82</span>% · <span id="pcon">Offline</span></div></div></div>
+
+<div class="scr" id="settings"><h2>Settings ⚙️</h2>
+<div class="card"><h3>Robot</h3><label for="rn">Robot name</label><input type="text" id="rn" value="BUBU"><div class="sw"><span>🔊 Volume</span><input type="range" id="vol" min="0" max="10" value="6" aria-label="Volume"></div><div class="sw"><span>🚗 Speed</span><input type="range" id="spd" min="1" max="3" value="1" aria-label="Speed"></div><div class="sw"><span>💡 LED eyes</span><input type="checkbox" checked aria-label="LED eyes"></div><div class="sw"><span>🏁 Race (seconds)</span><select id="rd" style="width:90px"><option>30</option><option>60</option><option selected>120</option></select></div></div>
+<div class="card"><h3>Child</h3><div class="sw"><span>⏱ Daily play limit (min)</span><select id="lim" style="width:90px"><option>20</option><option selected>30</option><option>60</option></select></div><button class="btn sk" onclick="show('profile')">Change avatar & name</button></div>
+<button class="btn" onclick="if(confirm('Reset all stars and stickers?')){localStorage.removeItem('bubuApp');location.reload()}">🗑 Reset progress</button></div>
+
+<nav class="nav" id="nav"></nav></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let S={name:'Janani',av:'👧',stars:40,toys:0,played:0,wins:0,best:0,own:[],hs:[],wk:[1,1,0,1,1,1,0],ach:[]};
+try{Object.assign(S,JSON.parse(localStorage.getItem('bubuApp')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('bubuApp',JSON.stringify(S))}catch(e){}};
+// toy watermark
+{const E='🧸🚗🎈🪀🧩⚽🪁🚂🦆🎨🪅🏀🚀🐘🎲🪆'.match(/./gu);for(let i=0;i<50;i++){const s=document.createElement('span');s.textContent=E[i%E.length];s.style.cssText=`left:${Math.random()*96}%;top:${Math.random()*96}%;font-size:${26+Math.random()*34}px;transform:rotate(${Math.random()*60-30}deg)`;$('#toys').appendChild(s)}}
+// robot (Disney-style cartoon)
+const ROBOT=`<svg viewBox="-20 0 350 310" role="img" aria-label="BUBU robot"><ellipse cx="165" cy="292" rx="140" ry="12" fill="#2b3a67" opacity=".15"/>
+<text class="note" x="20" y="90">🎵</text><text class="note" x="285" y="80" style="animation-delay:.8s">⭐</text><text class="note" x="250" y="40" style="animation-delay:1.6s">💖</text>
+<g class="bot"><g><circle cx="52" cy="235" r="34" fill="#23252b"/><circle cx="52" cy="235" r="17" fill="#ffc83d"/></g>
+<rect x="50" y="95" width="215" height="130" rx="40" fill="#f6f0e8"/><path d="M205 68Q268 60 272 120L272 210Q272 226 252 226L205 226Z" fill="#f4eee6"/>
+<text x="213" y="152" font-size="22" font-weight="700" fill="#2b3a67" font-family="Fredoka,sans-serif" transform="rotate(-2 213 152)">BUBU</text>
+<g fill="#2b3a67" transform="translate(262 140)"><ellipse cx="0" cy="3" rx="5" ry="4.5"/><circle cx="-6" cy="-4" r="2.2"/><circle cx="0" cy="-7" r="2.2"/><circle cx="7" cy="-4" r="2.2"/></g>
+<rect x="76" y="176" width="78" height="42" rx="10" fill="#9ccaf2"/><rect x="196" y="48" width="58" height="34" rx="12" fill="#b9d8f6" transform="rotate(6 225 65)"/>
+<g class="head"><path d="M52 150Q40 38 130 26L200 26Q262 40 252 150Z" fill="url(#bl)"/><path d="M95 44Q150 20 215 44" stroke="#e6f3ff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+<ellipse cx="148" cy="42" rx="22" ry="10" fill="#7fb6ea"/><g fill="#fff"><ellipse cx="148" cy="44" rx="6" ry="4.5"/><circle cx="137" cy="37" r="2.5"/><circle cx="148" cy="33" r="2.5"/><circle cx="159" cy="37" r="2.5"/></g>
+<circle cx="256" cy="98" r="30" fill="#ffd23f" class="glow" opacity=".35"/><circle cx="254" cy="98" r="19" fill="url(#lg)" stroke="#e8b800" stroke-width="3"/><circle cx="56" cy="98" r="12" fill="url(#lg)" stroke="#e8b800" stroke-width="2"/>
+<rect x="68" y="62" width="172" height="92" rx="20" fill="#15171c"/>
+<circle cx="112" cy="100" r="29" fill="#9aa0a8"/><circle cx="112" cy="100" r="23" fill="#2f3339"/><circle cx="112" cy="100" r="18" fill="url(#mesh)"/>
+<circle cx="196" cy="100" r="29" fill="#9aa0a8"/><circle cx="196" cy="100" r="23" fill="#2f3339"/><circle cx="196" cy="100" r="18" fill="url(#mesh)"/>
+<circle cx="104" cy="92" r="5" fill="#fff" opacity=".85"/><circle cx="188" cy="92" r="5" fill="#fff" opacity=".85"/>
+<circle class="eyelid" cx="112" cy="100" r="30" fill="#7d838c"/><circle class="eyelid" cx="196" cy="100" r="30" fill="#7d838c"/>
+<ellipse cx="87" cy="134" rx="9" ry="5.5" fill="#ff8fa8"/><ellipse cx="221" cy="134" rx="9" ry="5.5" fill="#ff8fa8"/>
+<path class="smile" d="M142 132Q154 145 166 132" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round"/><path class="frown" d="M142 140Q154 128 166 140" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round"/></g>
+<g transform="translate(240 232)"><circle r="52" fill="#1d1f24"/><g class="tread" fill="#3a3d45"><rect x="-6" y="-52" width="12" height="12" rx="3"/><rect x="-6" y="40" width="12" height="12" rx="3"/><rect x="-52" y="-6" width="12" height="12" rx="3"/><rect x="40" y="-6" width="12" height="12" rx="3"/><rect x="-6" y="-52" width="12" height="12" rx="3" transform="rotate(45)"/><rect x="-6" y="-52" width="12" height="12" rx="3" transform="rotate(135)"/><rect x="-6" y="-52" width="12" height="12" rx="3" transform="rotate(225)"/><rect x="-6" y="-52" width="12" height="12" rx="3" transform="rotate(315)"/></g><circle r="30" fill="#ffc83d" stroke="#f0a800" stroke-width="3"/><circle r="9" fill="#f0a800"/></g>
+<g class="scoop"><rect x="150" y="205" width="22" height="46" rx="8" fill="#ffc83d" stroke="#e8a400" stroke-width="2"/><circle cx="166" cy="212" r="10" fill="#f6f0e8" stroke="#ddd3c4" stroke-width="2"/>
+<path d="M-18 238L168 222L200 272L-20 284Z" fill="#ffd23f" stroke="#e8a400" stroke-width="3" stroke-linejoin="round"/><path d="M-18 238L168 222L174 232L-19 250Z" fill="#fff0a0"/><path d="M-20 284L200 272" stroke="#e8a400" stroke-width="5"/></g></g></svg>`;
+$$('[data-bot]').forEach(e=>{e.innerHTML=(e.dataset.bot?`<span class="say">${e.dataset.bot}</span>`:'')+ROBOT;e.onclick=()=>{e.classList.add('hype');beep([660,880,1040]);setTimeout(()=>e.classList.remove('hype'),1800)}});
+const botMood=(c)=>$$('.stage').forEach(e=>{e.classList.remove('sad','calm');if(c)e.classList.add(c)});
+// audio / confetti
+let ac;function beep(q){try{if(+$('#vol').value===0)return;ac=ac||new(window.AudioContext||window.webkitAudioContext)();let t=ac.currentTime;q.forEach(f=>{const o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(.012*$('#vol').value,t);g.gain.exponentialRampToValueAtTime(.001,t+.14);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+.15);t+=.16})}catch(e){}}
+function confetti(){const c=$('#conf');for(let i=0;i<40;i++){const s=document.createElement('i');s.textContent='🎉⭐💖🎈✨'.match(/./gu)[i%5];s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*.6+'s';c.appendChild(s);setTimeout(()=>s.remove(),3200)}}
+// router
+const NAV=[['home','🏠','Home'],['bubu','🤖','My BUBU'],['games','🎮','Games'],['rewards','⭐','Rewards'],['alerts','🔔','Alerts']];
+$('#nav').innerHTML=NAV.map(n=>`<button data-n="${n[0]}" onclick="show('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('');
+function show(id){$$('.scr').forEach(s=>s.classList.toggle('on',s.id===id));$$('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.n===id));const hide=['splash','profile'].includes(id);$('#nav').style.display=$('#top').style.display=hide?'none':'';if(id==='parent')gate();render();scrollTo(0,0)}
+// profile
+const AV=['👧','👦','🧒','🦄','🐻','🐱'];$('#avs').innerHTML=AV.map(a=>`<button class="av ${a===S.av?'on':''}" onclick="S.av='${a}';$$('.av').forEach(x=>x.classList.toggle('on',x.textContent==='${a}'))" aria-label="Avatar ${a}">${a}</button>`).join('');$('#nm').value=S.name;
+function saveProfile(){S.name=$('#nm').value.trim()||'Friend';save();show('home');beep([520,660,780])}
+// levels / stickers
+const LV=[['BUBU Friend',0],['Toy Helper',30],['Clean Hero',70],['BUBU Champion',120],['BUBU Master',200],['Super BUBU',300]];
+const lvl=()=>{let i=0;LV.forEach((l,k)=>{if(S.stars>=l[1])i=k});return i};
+const STK=[['🤖','BUBU'],['⭐','Super Helper'],['🏆','Champion'],['🧹','Clean Hero'],['❤️','BUBU Friend'],['🌈','Rainbow'],['🚀','Explorer'],['🐻','Toy Saver'],['👑','BUBU Master']].concat('🦆🎈🧩🚗🪁🐘🎨🦄🍭🎵🌟🪀🚂🎲🐠🦋🐱🐶🍓🎂🪅'.match(/./gu).map(e=>[e,'Toy pal']));
+const ACH=[['🧹','First Helper','First cleaning',()=>S.toys>=1],['⭐','Star Kid','Earn 50 stars',()=>S.stars>=50],['🏆','Race Champion','Win 5 races',()=>S.wins>=5],['🤖','BUBU Friend','Play 10 games',()=>S.played>=10],['🧸','Toy Saver','Help with 50 toys',()=>S.toys>=50],['🔥','Super Helper','7-day streak',()=>S.wk.every(x=>x)],['👑','BUBU Master','Own all 30 stickers',()=>S.own.length>=30]];
+const addAlert=(i,t,b,act)=>{AL.unshift({i,t,b,act,id:Date.now()});render()};
+let AL=[{i:'🔍',t:'BUBU found fewer toys',b:'Today: 8 · Usually: 12. Maybe 4 toys are hiding! 👀'},{i:'🔋',t:'Battery is great',b:'BUBU is at 82%.'}];
+// render
+function render(){const L=lvl(),nx=LV[L+1];
+$('#hi').textContent=`Hi ${S.name}! ${S.av}`;$$('.av2').forEach(e=>e.textContent=S.av);$('#hstars').textContent=S.stars;$('#htoys').textContent=S.toys;
+const p=nx?(S.stars-LV[L][1])/(nx[1]-LV[L][1])*100:100;$('#hbar').style.width=$('#lvb').style.width=p+'%';$('#hnext').textContent=nx?`${nx[1]-S.stars} stars to ${nx[0]}`:'Top level!';
+$('#lvn').textContent=`Level ${L+1}: ${LV[L][0]}`;$('#lvs').textContent=nx?`${S.stars} / ${nx[1]} stars`:`${S.stars} stars`;
+$('#lvl').innerHTML=LV.map((l,i)=>`<div class="sw"><span>${i<=L?'🌟':'🔒'} Level ${i+1} · ${l[0]}</span><small>${l[1]}⭐</small></div>`).join('');
+$('#sc').textContent=S.own.length;$('#sg').innerHTML=STK.map((s,i)=>S.own.includes(i)?`<div class="stk">${s[0]}<small>${s[1]}</small></div>`:`<div class="stk lock">🔒</div>`).join('');
+$('#ps').innerHTML=[['🎮','Games played',S.played],['🧸','Toys helped',S.toys],['⭐','Stars',S.stars],['🎨','Stickers',S.own.length+'/30'],['🏆','Best race',S.best+' toys'],['🌟','Level',LV[L][0]]].map(x=>`<div class="card sw"><span>${x[0]} ${x[1]}</span><b>${x[2]}</b></div>`).join('');
+$('#wk').innerHTML='MTWTFSS'.split('').map((d,i)=>`<div>${d}<br>${S.wk[i]?'●':'○'}</div>`).join('');
+$('#ach').innerHTML=ACH.map(a=>`<div class="sw"><span>${a[3]()?a[0]:'🔒'} <b>${a[1]}</b><br><small>${a[2]}</small></span><span>${a[3]()?'✅':''}</span></div>`).join('');
+$('#alist').innerHTML=AL.map(a=>`<div class="card ${a.act?'p':''}"><div class="al"><span>${a.i}</span><div><h3>${a.t}</h3>${a.b}${a.act?`<br><button class="btn pk" onclick="helpBubu(${a.id})">🙋 HELP BUBU</button>`:''}</div></div></div>`).join('')||'<p class="c">No alerts. 🎉</p>';
+$('#pt').innerHTML=[['🎮 Games',S.played],['🧸 Toys tidied',S.toys],['⭐ Stars earned',S.stars],['⏱ Play time',S.played*4+' min']].map(x=>`<div class="sw"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+$('#pcon').textContent=on?'🟢 Connected':'🔴 Offline';$('.nav [data-n=alerts] span').textContent=AL.some(a=>a.act)?'🔴':'🔔'}
+// games
+const MG={find:{t:'🔍 Find the Toy',i:'🔎',n:3,q:['Can you find the red ball? 🔴','Find a teddy! 🧸','Find a block! 🟦'],r:5},says:{t:'🤖 BUBU Says',i:'🗣',n:4,q:['BUBU says clap! 👏','BUBU says jump! 🦘','BUBU says spin around! 🌀','BUBU says find a toy! 🧸'],r:5},rescue:{t:'🚨 Toy Rescue',i:'🆘',n:3,q:['Oh no! My teddy is trapped! Find it! 🧸','My car rolled away! Help! 🚗','My ball is hiding! ⚽'],r:6},clean:{t:'🧹 Clean-Up Challenge',i:'🧺',n:10,q:['Help BUBU clean 10 toys! Tap each time you put one away.'],r:10}};
+const GL=[['race','🏁','Tidy Race','Race BUBU for 2 minutes'],['find','🔍','Find the Toy','Spot what BUBU asks for'],['says','🤖','BUBU Says','Like Simon Says'],['rescue','🚨','Toy Rescue','Help BUBU save a toy'],['clean','🧹','Clean-Up Challenge','Tidy 10 toys'],['lead','🏆','Beat BUBU','High scores']];
+$('#glist').innerHTML=GL.map(g=>`<div class="card ${'y p sk'.split(' ')[GL.indexOf(g)%3]==='sk'?'':'y p'.split(' ')[GL.indexOf(g)%2]}"><div class="al"><span>${g[1]}</span><div style="flex:1"><h3>${g[2]}</h3><small>${g[3]}</small></div><button class="btn pk" onclick="play('${g[0]}')">Play</button></div></div>`).join('');
+function play(g){if(g==='race')return startRace();if(g==='lead')return leader();mini(g)}
+function leader(){const h=S.hs||[];alert('🏆 Beat BUBU high scores\n'+(h.slice(0,5).map((x,i)=>`${i+1}. ${x.n}: ${x.s} toys`).join('\n')||'Play Tidy Race to get on the board!'))}
+let M;function mini(g){const d=MG[g];M={g,d,k:0};$('#mt').textContent=d.t;$('#mi').textContent=d.i;$('#mgo').onclick=mstep;mstep(true);show('mini')}
+function mstep(first){if(first!==true){M.k++;beep([660,880])}$('#mb').style.width=M.k/M.d.n*100+'%';$('#mp').textContent=`${M.k} / ${M.d.n}`;if(M.k>=M.d.n){S.toys+=M.g==='clean'?10:0;return finish({title:'🎉 Great job!',you:M.k,bu:M.k,stars:M.d.r,win:true})}$('#mq').textContent=M.d.q[M.k%M.d.q.length]}
+// race
+let R;function startRace(){const dur=+$('#rd').value;R={t:dur,dur,me:0,bu:0};$('#board').innerHTML='';'🧸🚗🎈🧩⚽🦆🪀🚂🎲🐘🪁🏀🪅🚀🪆'.match(/./gu).forEach(t=>{const b=document.createElement('button');b.className='toy';b.textContent=t;b.onclick=()=>{if(!b.classList.contains('gone')&&R){b.classList.add('gone');R.me++;beep([880]);ru()}};$('#board').appendChild(b)});ru();show('race');clearInterval(R.id);
+R.id=setInterval(()=>{R.t--;if(R.t%(R.dur>=120?3:2)===0){const a=$$('.toy:not(.gone)');if(a.length){const e=a[Math.random()*a.length|0];e.classList.add('bu');setTimeout(()=>{if(R&&!e.classList.contains('gone')){e.classList.add('gone');R.bu++;ru()}},500)}}ru();if(R.t<=0||!$$('.toy:not(.gone)').length)endRace()},1000)}
+function ru(){const m=Math.floor(R.t/60),s=R.t%60;$('#rt').textContent=`0${m}:${String(s).padStart(2,'0')}`;$('#rm').textContent=R.me;$('#rb').textContent=R.bu;$('#rbar').style.width=(R.me+R.bu)/15*100+'%';$('#rmsg').textContent=R.me>R.bu?'Keep going! 🔥':'Catch up to BUBU! 🏃'}
+function endRace(stop){if(!R)return;clearInterval(R.id);const r=R;R=null;if(stop&&!r.me&&!r.bu)return show('games');S.hs=(S.hs||[]).concat({n:S.name,s:r.me}).sort((a,b)=>b.s-a.s).slice(0,5);S.best=Math.max(S.best,r.me);S.toys+=r.me;if(r.me>r.bu)S.wins++;finish({title:r.me>r.bu?'YOU WON! 🏆':r.me===r.bu?'A TIE! 🤝':'BUBU WINS! 🤖',you:r.me,bu:r.bu,stars:r.me>r.bu?10:r.me>=r.bu?6:3,win:r.me>=r.bu})}
+// result / reward
+let P;function finish(o){S.played++;S.wk[(new Date().getDay()+6)%7]=1;const free=STK.map((_,i)=>i).filter(i=>!S.own.includes(i));P={stars:o.stars,stk:o.win&&free.length?free[Math.random()*free.length|0]:null};$('#rh').textContent=o.title;$('#r1').textContent=o.you;$('#r2').textContent=o.bu;$('#r3').textContent=o.stars;$('#rstk').textContent=P.stk!=null?STK[P.stk][0]:'🍀';$('#rsn').textContent=P.stk!=null?'NEW STICKER: '+STK[P.stk][1]:'Try again for a sticker!';$('#rbot').classList.toggle('sad',!o.win);show('result');if(o.win){confetti();beep([520,660,780,1040])}else beep([300,240]);save()}
+function claim(){const L=lvl();S.stars+=P.stars;if(P.stk!=null&&!S.own.includes(P.stk))S.own.push(P.stk);save();if(lvl()>L){confetti();alert('🌟 Level up! You are now '+LV[lvl()][0]+'!')}show('stickers')}
+// robot connection and simulation
+let on=false,ws=null;
+function setOn(v){on=v;$$('#hst,#mst').forEach(e=>{e.className='pill '+(v?'g':'r');e.textContent=v?'🟢 BUBU is online':'🔴 BUBU is offline'});render()}
+function connect(){$('#cmsg').textContent='Looking for BUBU… 📡';$('#cbtn').disabled=true;const url=$('#ip').value.trim();
+const done=(real)=>{$('#cbtn').disabled=false;setOn(true);$('#cmsg').textContent=real?'Connected to your BUBU! 🎉':'Demo BUBU connected! 🎉';beep([520,660,780]);confetti();setTimeout(()=>show('bubu'),1200)};
+try{ws=new WebSocket(url);const to=setTimeout(()=>{try{ws.close()}catch(e){}ws=null;done(false)},3500);ws.onopen=()=>{clearTimeout(to);done(true)};ws.onmessage=m=>bubuState(String(m.data).trim());ws.onerror=()=>{}}catch(e){done(false)}}
+// STATE API: the ESP32 may send: SEARCHING TOY_FOUND PUSHING DELIVERED STUCK HUMAN_DETECTED BATTERY_LOW GAME_STARTED GAME_FINISHED
+const ST={CONNECTED:['🟢','Online','Taking a break',''],SEARCHING:['🔍','Searching','Searching for toys',''],TOY_FOUND:['🧸','Toy found!','Pushing a toy','calm'],PUSHING:['🚜','Pushing','Pushing a toy',''],DELIVERED:['🏠','Delivered!','Going home',''],STUCK:['🥺','Stuck!','Needs help','sad'],HUMAN_DETECTED:['🐶','Someone is near','Taking a break','calm'],PAUSED:['⏸','Paused','Taking a break','calm'],BATTERY_LOW:['🪫','Battery low','Taking a break','sad']};
+let toysNow=0;
+function bubuState(s){const d=ST[s];if(!d)return;$('#lst').textContent=d[0]+' '+d[1];$('#hact').textContent=d[2];$('#lmsg').textContent={SEARCHING:'Looking around…',TOY_FOUND:'I found one! 🧸',PUSHING:'Pushing to Toy House!',DELIVERED:'We did it! 🎉',STUCK:'Umm… I need your help! 🥺',HUMAN_DETECTED:'Safety break!',PAUSED:'Paused'}[s]||'';botMood(d[3]);
+if(s==='DELIVERED'){toysNow++;S.toys++;$('#ltoys').textContent=toysNow;beep([660,880,1040]);save()}if(s==='STUCK'){beep([300,220]);addAlert('🤖','BUBU NEEDS HELP!','"Something is blocking me." 📍 Near the sofa',true)}if(s==='HUMAN_DETECTED')addAlert('🐶','Someone is nearby!','BUBU is taking a safety break.');if(s==='BATTERY_LOW')addAlert('🪫','Battery low','Please charge BUBU.');render()}
+const SIM=[['SEARCHING',30,25],['TOY_FOUND',12,14],['PUSHING',50,45],['PUSHING',78,70],['DELIVERED',80,78],['SEARCHING',30,40],['TOY_FOUND',74,14],['PUSHING',78,50],['DELIVERED',80,78],['STUCK',40,55],['SEARCHING',30,30],['HUMAN_DETECTED',50,30]];
+let sim=null,si=0;
+function startBubu(){if(!on){show('connect');return}if(ws&&ws.readyState===1){ws.send('START');return}clearInterval(sim);show('live');si=0;sim=setInterval(()=>{const[s,x,y]=SIM[si++%SIM.length];$('#abot').style.left=x+'%';$('#abot').style.top=y+'%';bubuState(s)},2200);bubuState('SEARCHING')}
+function ctl(c){if(ws&&ws.readyState===1)ws.send(c.toUpperCase());if(c==='pause'){clearInterval(sim);bubuState('PAUSED')}if(c==='stop'){clearInterval(sim);bubuState('CONNECTED');$('#lmsg').textContent='Stopped'}if(c==='home'){clearInterval(sim);$('#abot').style.left='72%';$('#abot').style.top='70%';bubuState('DELIVERED')}if(!on)show('connect')}
+function drive(dx,dy){const b=$('#abot');b.style.left=Math.max(2,Math.min(88,parseFloat(b.style.left)+dx))+'%';b.style.top=Math.max(2,Math.min(76,parseFloat(b.style.top)+dy))+'%';if(ws&&ws.readyState===1)ws.send(dy<0?'FWD':dy>0?'BACK':dx<0?'LEFT':'RIGHT')}
+function helpBubu(id){AL=AL.filter(a=>a.id!==id);beep([520,660,780]);S.stars+=2;save();bubuState('SEARCHING');if(!sim||!on)bubuState('CONNECTED');render();confetti()}
+$('#modes').innerHTML=[['🧹','Tidy'],['🎮','Game'],['🏁','Race'],['🔍','Search'],['🏠','Return Home'],['⏸','Pause']].map(m=>`<button class="btn sk" onclick="$('#mmode').textContent='Mode: ${m[1]}';ctl('${m[1]==='Pause'?'pause':m[1]==='Return Home'?'home':'mode'}')">${m[0]} ${m[1]}</button>`).join('');
+// parent gate
+let ga;function gate(){const a=2+Math.random()*6|0,b=3+Math.random()*6|0;ga=a+b;$('#q').textContent=`${a} + ${b}`;$('#qa').value='';$('#gate').hidden=false;$('#pbody').hidden=true}
+function gateOk(){if(+$('#qa').value===ga){$('#gate').hidden=true;$('#pbody').hidden=false}else{$('#qa').value='';beep([200])}}
+// greetings on home
+$('#hbot').dataset.bot='';$('#hbot').insertAdjacentHTML('afterbegin',`<span class="say">Hi! Ready to play? 🎉</span>`);
+show('splash');
+</script></body></html>
